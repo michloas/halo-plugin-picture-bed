@@ -8,7 +8,7 @@ import SmmsSelectorProvider from "@/components/SmmsSelectorProvider.vue"
 import ImgtpSelectorProvider from "@/components/ImgtpSelectorProvider.vue"
 import { useQuery } from "@tanstack/vue-query"
 import { pictureBedApisClient } from "@/api"
-import type { AttachmentLike } from "@halo-dev/console-shared"
+import type { AttachmentLike } from "@halo-dev/ui-shared"
 
 interface PictureBed {
   label: string

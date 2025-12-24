@@ -1,4 +1,4 @@
-import { type AttachmentSelectProvider, definePlugin, } from "@halo-dev/console-shared"
+import { type AttachmentSelectProvider, definePlugin, } from "@halo-dev/ui-shared"
 import { markRaw } from "vue"
 import "./styles/tailwind.css"
 import MdiPicture360Outline from "~icons/mdi/picture-360-outline"

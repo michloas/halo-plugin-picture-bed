@@ -61,8 +61,8 @@ const msg = ref("点击退出预览");
               @click="onlyPreview = !onlyPreview"
             >
               <LazyImage
-                :alt="imageSelected?.name"
-                :src="imageSelected?.url"
+                :alt="imageSelected?.name || ''"
+                :src="imageSelected?.url || ''"
                 classes="max-w-full cursor-pointer rounded sm:max-w-[50%]"
               >
                 <template #loading>

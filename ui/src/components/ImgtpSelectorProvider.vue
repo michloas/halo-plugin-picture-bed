@@ -16,7 +16,7 @@ import {
 } from "@halo-dev/components"
 import { computed, ref, watch } from "vue"
 import { isImage } from "@/utils/image"
-import type { AttachmentLike } from "@halo-dev/console-shared"
+import type { AttachmentLike } from "@halo-dev/ui-shared"
 import { matchMediaTypes } from "@/utils/media-type"
 import LazyImage from "@/components/image/LazyImage.vue"
 import { useQuery } from "@tanstack/vue-query"

@@ -11,7 +11,7 @@ import {
 } from "@halo-dev/components"
 import { computed, onMounted, ref, watch } from "vue"
 import { isImage } from "@/utils/image"
-import type { AttachmentLike } from "@halo-dev/console-shared"
+import type { AttachmentLike } from "@halo-dev/ui-shared"
 import { matchMediaTypes } from "@/utils/media-type"
 import LazyImage from "@/components/image/LazyImage.vue"
 import { useQuery } from "@tanstack/vue-query"
@@ -315,8 +315,8 @@ onMounted(() => {
           <LazyImage
             v-if="isImage(image.mediaType)"
             :key="image.id"
-            :alt="image.name"
-            :src="image.url"
+            :alt="image.name || ''"
+            :src="image.url || ''"
             classes="pointer-events-none object-cover group-hover:opacity-75 transform-gpu">
             <template #loading>
               <div class="flex h-full items-center justify-center object-cover">
@@ -364,7 +364,7 @@ onMounted(() => {
       <span v-if="selectedImage && selectedImages.has(selectedImage)" @click="handleSelect(selectedImage)">
         <IconCheckboxFill />
       </span>
-      <span v-else @click="handleSelect(selectedImage)">
+      <span v-else @click="selectedImage && handleSelect(selectedImage)">
         <IconCheckboxCircle />
       </span>
     </template>

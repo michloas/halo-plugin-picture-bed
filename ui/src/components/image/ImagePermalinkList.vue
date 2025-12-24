@@ -6,14 +6,10 @@ import type {ImageVO} from "@/api/generated";
 
 const props = withDefaults(
     defineProps<{
-      visible: boolean;
       image?: ImageVO;
-      mountToBody?: boolean;
     }>(),
     {
-      visible: false,
       image: undefined,
-      mountToBody: false,
     }
 );
 

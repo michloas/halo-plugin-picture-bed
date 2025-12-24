@@ -1,4 +1,6 @@
-import type {Image} from "@/types";
+import type {ImageVO} from "@/api/generated";
+
+type Image = ImageVO;
 import {useClipboard} from "@vueuse/core";
 import {computed, type Ref} from "vue";
 import {matchMediaType} from "@/utils/media-type";

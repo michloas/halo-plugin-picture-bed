@@ -32,7 +32,7 @@ import VscodeIconsFileTypePhp3 from "~icons/vscode-icons/file-type-php3";
 import { extname } from "path-browserify";
 import { computed, markRaw } from "vue";
 
-const FileTypeIconsMap = {
+const FileTypeIconsMap: Record<string, ReturnType<typeof markRaw>> = {
   // image
   ".jpg": markRaw(VscodeIconsFileTypeImage),
   ".png": markRaw(VscodeIconsFileTypeImage),
@@ -89,14 +89,17 @@ const props = withDefaults(
 );
 
 const getExtname = computed(() => {
-  const ext = extname(props.fileName);
+  const ext = extname(props.fileName || '');
   if (ext) return ext.toLowerCase();
   return undefined;
 });
 
 const getIcon = computed(() => {
-  const icon = FileTypeIconsMap[getExtname.value];
-  if (icon) return icon;
+  const ext = getExtname.value;
+  if (ext) {
+    const icon = FileTypeIconsMap[ext];
+    if (icon) return icon;
+  }
   return markRaw(VscodeIconsDefaultFile);
 });
 
