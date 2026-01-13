@@ -6,6 +6,7 @@ import MdiPicture360Outline from '~icons/mdi/picture-360-outline'
 import LskySelectorProvider from "@/components/LskySelectorProvider.vue"
 import SmmsSelectorProvider from "@/components/SmmsSelectorProvider.vue"
 import ImgtpSelectorProvider from "@/components/ImgtpSelectorProvider.vue"
+import JuHeSelectorProvider  from "@/components/JuHeSelectorProvider.vue";
 import { useQuery } from "@tanstack/vue-query"
 import { pictureBedApisClient } from "@/api"
 import type { AttachmentLike } from "@halo-dev/ui-shared"
@@ -94,6 +95,13 @@ const handleAttachmentUpdate = (attachments: AttachmentLike[]) => {
       </template>
       <template v-else-if="pictureBedKey.startsWith('imgtp')">
         <ImgtpSelectorProvider
+          :pictureBedKey="pictureBedKey"
+          :selected="selectedAttachments"
+          @update:selected="handleAttachmentUpdate"
+          :key="pictureBedKey" />
+      </template>
+      <template v-else-if="pictureBedKey.startsWith('juhe')">
+        <JuHeSelectorProvider
           :pictureBedKey="pictureBedKey"
           :selected="selectedAttachments"
           @update:selected="handleAttachmentUpdate"

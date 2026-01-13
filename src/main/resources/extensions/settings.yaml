@@ -36,6 +36,8 @@ spec:
                   value: imgtp
                 - label: 123盘图床
                   value: pan123
+                - label: 聚合图床
+                  value: juhe
             - $formkit: text
               name: pictureBedName
               key: pictureBedName

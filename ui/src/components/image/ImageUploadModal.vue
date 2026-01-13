@@ -3,18 +3,18 @@ import {Toast, VModal} from "@halo-dev/components";
 import type {ErrorResponse, SuccessResponse, UppyFile} from "@uppy/core";
 
 const props = withDefaults(
-    defineProps<{
-      picBedType?: string;
-      picBedId?: string;
-      albumId?: string;
-      visible?: boolean;
-    }>(),
-    {
-      picBedType: "",
-      picBedId: "",
-      albumId: "",
-      visible: false,
-    }
+  defineProps<{
+    picBedType?: string;
+    picBedId?: string;
+    albumId?: string;
+    visible?: boolean;
+  }>(),
+  {
+    picBedType: "",
+    picBedId: "",
+    albumId: "",
+    visible: false,
+  }
 );
 
 const emit = defineEmits<{
@@ -42,24 +42,24 @@ const uploadUrl = `/apis/picturebed.muyin.site/v1alpha1/uploadImage?type=${props
 
 <template>
   <VModal
-      :visible="props.visible"
-      title="上传图片"
-      :width="600"
-      height="400"
-      :layer-closable="true"
-      :body-class="['!p-0']"
-      @close="emit('close')"
+    :visible="props.visible"
+    title="上传图片"
+    :width="600"
+    height="400"
+    :layer-closable="true"
+    :body-class="['!p-0']"
+    @close="emit('close')"
   >
     <UppyUpload
-        :restrictions="{
-          allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.bmp', '.webp'],
+      :restrictions="{
+          allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.bmp', '.webp','.heic'],
         }"
-        width="100%"
-        note="仅支持图片格式"
-        :endpoint="uploadUrl"
-        @uploaded="onUploaded"
-        @error="onError"
-        :doneButtonHandler="() => onVisibleChange(false)"
+      width="100%"
+      note="仅支持图片格式"
+      :endpoint="uploadUrl"
+      @uploaded="onUploaded"
+      @error="onError"
+      :doneButtonHandler="() => onVisibleChange(false)"
     />
   </VModal>
 </template>
