@@ -62,7 +62,7 @@ public class PictureBedEndpoint implements CustomEndpoint {
                             builder.operationId("images")
                                     .description("images")
                                     .tag(tag)
-                                    .response(responseBuilder().implementation(PageResult.class).content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_UTF8_VALUE).schema(schemaBuilder().implementation(ImageVO.class))));
+                                    .response(responseBuilder().implementation(PageResult.class).content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE).schema(schemaBuilder().implementation(ImageVO.class))));
                             CommonQuery.buildParameters(builder);
                         })
                 .GET("deleteImage", this::deleteImage,
@@ -115,14 +115,14 @@ public class PictureBedEndpoint implements CustomEndpoint {
     private Mono<ServerResponse> getAlbumList(ServerRequest serverRequest) {
         CommonQuery query = new CommonQuery(serverRequest.exchange());
         return pictureBedService.getAlbumList(query).flatMap(albumVOList -> {
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).bodyValue(albumVOList);
+            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(albumVOList);
         });
     }
 
     private Mono<ServerResponse> getImageList(ServerRequest serverRequest) {
         CommonQuery query = new CommonQuery(serverRequest.exchange());
         return pictureBedService.getImageList(query).flatMap(pageResult -> {
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).bodyValue(pageResult);
+            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(pageResult);
         });
     }
 
@@ -130,9 +130,9 @@ public class PictureBedEndpoint implements CustomEndpoint {
         CommonQuery query = new CommonQuery(serverRequest.exchange());
         return pictureBedService.deleteImage(query).flatMap(result -> {
             if (result) {
-                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).bodyValue(result);
+                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(result);
             } else {
-                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON_UTF8).bodyValue(result);
+                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(result);
             }
         });
     }
