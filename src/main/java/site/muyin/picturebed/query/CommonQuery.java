@@ -1,14 +1,14 @@
 package site.muyin.picturebed.query;
 
+import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
+import static run.halo.app.extension.router.QueryParamBuildUtil.sortParameter;
+
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springdoc.core.fn.builders.operation.Builder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import run.halo.app.extension.router.IListRequest;
 import run.halo.app.extension.router.SortableRequest;
-
-import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
-import static run.halo.app.extension.router.QueryParamBuildUtil.sortParameter;
 
 /**
  * @author: lywq
@@ -43,6 +43,14 @@ public class CommonQuery extends SortableRequest {
 
     public String getKeyword() {
         return queryParams.getFirst("keyword");
+    }
+
+    public String getCategories() {
+        String categories = queryParams.getFirst("categories");
+        if (categories == null) {
+            return "";
+        }
+        return categories;
     }
 
     public Integer getPage() {
@@ -93,6 +101,12 @@ public class CommonQuery extends SortableRequest {
                         .name("keyword")
                         .implementation(String.class)
                         .description("keyword")
+                        .required(false))
+                .parameter(parameterBuilder()
+                        .in(ParameterIn.QUERY)
+                        .name("categories")
+                        .implementation(String.class)
+                        .description("categories")
                         .required(false))
         ;
     }

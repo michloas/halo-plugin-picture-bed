@@ -47,6 +47,8 @@ tasks.named('classes') {
 
 halo {
     version = '2.23.0'
+//    debug = true
+//    suspend = true
 }
 
 

@@ -3,6 +3,7 @@ package site.muyin.picturebed.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +39,12 @@ public class PictureBedUtil {
                 .filter(entry -> entry.getValue() != null) // 过滤掉值为null的键
                 .map(entry -> {
                     String encodedKey = encodeValue(entry.getKey());
-                    String encodedValue = encodeValue(entry.getValue().toString());
+                    String encodedValue ="";
+                    if(StringUtils.equals(encodedKey, "categories")){
+                        encodedValue = entry.getValue().toString();
+                    }else {
+                         encodedValue = encodeValue(entry.getValue().toString());
+                    }
                     return encodedKey + "=" + encodedValue;
                 })
                 .collect(Collectors.joining("&"));

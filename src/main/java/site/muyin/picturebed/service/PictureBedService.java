@@ -71,6 +71,15 @@ public class PictureBedService {
                 });
             case SMMS:
                 // TODO: get album list from smms
+            case JUHE:
+                return juheService.getAlbumList(query).flatMap(juheAlbums -> {
+                    List<AlbumVO> albumVOList = juheAlbums.stream().map(juheAlbum -> {
+                        AlbumVO albumVO = new AlbumVO();
+                        albumVO.setId(String.valueOf(juheAlbum.getId())).setName(juheAlbum.getName());
+                        return albumVO;
+                    }).toList();
+                    return Mono.just(albumVOList);
+                });
             default:
                 // TODO: get album list from other picture bed service
                 break;

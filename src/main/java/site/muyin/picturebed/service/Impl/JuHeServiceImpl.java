@@ -5,9 +5,11 @@ import static site.muyin.picturebed.constant.CommonConstant.PictureBedType.JUHE;
 
 import io.netty.channel.ChannelOption;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import reactor.netty.http.client.HttpClient;
 import run.halo.app.plugin.ReactiveSettingFetcher;
 import site.muyin.picturebed.config.PictureBedConfig;
 import site.muyin.picturebed.domain.JhImage;
+import site.muyin.picturebed.domain.JuHeAlbum;
 import site.muyin.picturebed.query.CommonQuery;
 import site.muyin.picturebed.service.JuHeService;
 import site.muyin.picturebed.utils.PictureBedUtil;
@@ -57,7 +60,7 @@ public class JuHeServiceImpl implements JuHeService {
     private final WebClient webClient = WebClient.builder()
         .clientConnector(new ReactorClientHttpConnector(
             HttpClient.create()
-                .responseTimeout(Duration.ofSeconds(5)) // 设置响应超时时间
+                .responseTimeout(Duration.ofSeconds(20)) // 设置响应超时时间
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000) // 设置连接超时时间
         ))
         .defaultHeader(HttpHeaders.CACHE_CONTROL, "no-cache")
@@ -79,6 +82,7 @@ public class JuHeServiceImpl implements JuHeService {
     public Mono<ResultsVO> uploadImage(CommonQuery query, MultiValueMap<String, ?> multipartData) {
         Map<String, Object> paramMap = new HashMap(1);
         paramMap.put("file", multipartData);
+        paramMap.put("categories", query.getCategories());
         return req(query.getPictureBedId(), "upload", paramMap)
             .map(response -> {
                 if (response.err == 0) {
@@ -101,6 +105,7 @@ public class JuHeServiceImpl implements JuHeService {
         Map<String, Object> paramMap = new HashMap(1);
         paramMap.put("page", query.getPage());
         paramMap.put("size", query.getSize());
+        paramMap.put("categories", query.getCategories());
         return req(query.getPictureBedId(), "timeline", paramMap)
             .mapNotNull(response -> {
                 List<JhImage> imageList =
@@ -110,6 +115,36 @@ public class JuHeServiceImpl implements JuHeService {
                         response.total, imageList);
                 }
                 return null;
+            });
+    }
+
+
+    /**
+     * 获取图库列表
+     *
+     * @param query :
+     * @return: reactor.core.publisher.Mono<java.util.List < site.muyin.picturebed.domain.LskyProAlbum>>
+     * @author: lywq
+     * @date: 2024/05/22 21:31
+     **/
+    @Override
+    public Mono<List<JuHeAlbum>> getAlbumList(CommonQuery query) {
+        Map<String, Object> paramMap = new HashMap(1);
+        return req(query.getPictureBedId(), "categories", paramMap)
+            .map(response -> {
+                List<JuHeAlbum> albumList = Collections.emptyList();
+                if (response.err == 0) {
+                    Map<String, Integer> categoriesMap = (Map<String, Integer>) response.categories;
+                    albumList = categoriesMap.entrySet().stream()
+                        .map(entry -> {
+                            JuHeAlbum album = new JuHeAlbum();
+                            album.setId(entry.getValue());
+                            album.setName(entry.getKey());
+                            return album;
+                        })
+                        .collect(Collectors.toList());
+                }
+                return albumList;
             });
     }
 
@@ -156,6 +191,7 @@ public class JuHeServiceImpl implements JuHeService {
                     .build();
 
                 switch (path) {
+                    case "categories":
                     case "timeline":
                         paramMap.put("token", authorization);
                         paramMap.put("f", "json");
@@ -190,6 +226,7 @@ public class JuHeServiceImpl implements JuHeService {
                         MultiValueMap<String, Object> multipartData = new LinkedMultiValueMap<>();
                         multipartData.add("file", multiValueMap.getFirst("file"));
                         multipartData.add("token", authorization);
+                        multipartData.add("categories", paramMap.get("categories"));
 
                         return client.post()
                             .uri(url + path)
@@ -225,6 +262,6 @@ public class JuHeServiceImpl implements JuHeService {
     public record JhResponseRecord(Integer err, String msg, String url, Object docs, Integer page,
                                    Integer size,
                                    Integer pages,
-                                   Integer total) {
+                                   Integer total, Object categories) {
     }
 }

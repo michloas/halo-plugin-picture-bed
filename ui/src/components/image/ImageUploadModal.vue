@@ -1,43 +1,45 @@
 <script setup lang="ts">
-import {Toast, VModal} from "@halo-dev/components";
-import type {ErrorResponse, SuccessResponse, UppyFile} from "@uppy/core";
+import { Toast, VModal } from '@halo-dev/components'
+import type { ErrorResponse, SuccessResponse, UppyFile } from '@uppy/core'
 
 const props = withDefaults(
   defineProps<{
-    picBedType?: string;
-    picBedId?: string;
-    albumId?: string;
-    visible?: boolean;
+    picBedType?: string
+    picBedId?: string
+    albumId?: string
+    visible?: boolean
+    categories?: string
   }>(),
   {
-    picBedType: "",
-    picBedId: "",
-    albumId: "",
+    picBedType: '',
+    picBedId: '',
+    albumId: '',
     visible: false,
-  }
-);
+    categories: '',
+  },
+)
 
 const emit = defineEmits<{
-  (event: "update:visible", visible: boolean): void;
-  (event: "close"): void;
-}>();
+  (event: 'update:visible', visible: boolean): void
+  (event: 'close'): void
+}>()
 
 const onVisibleChange = (visible: boolean) => {
-  emit("update:visible", visible);
+  emit('update:visible', visible)
   if (!visible) {
-    emit("close");
+    emit('close')
   }
-};
+}
 
 const onUploaded = async (response: SuccessResponse) => {
-  Toast.success("上传成功！");
-};
+  Toast.success('上传成功！')
+}
 
 const onError = (file: UppyFile, response: ErrorResponse) => {
-  console.error("上传失败", file, response, response.body);
-};
+  console.error('上传失败', file, response, response.body)
+}
 
-const uploadUrl = `/apis/picturebed.muyin.site/v1alpha1/uploadImage?type=${props.picBedType}&pictureBedId=${props.picBedId}&albumId=${props.albumId}`;
+const uploadUrl = `/apis/picturebed.muyin.site/v1alpha1/uploadImage?type=${props.picBedType}&pictureBedId=${props.picBedId}&categories=${props.categories}&albumId=${props.albumId}`
 </script>
 
 <template>
@@ -52,8 +54,8 @@ const uploadUrl = `/apis/picturebed.muyin.site/v1alpha1/uploadImage?type=${props
   >
     <UppyUpload
       :restrictions="{
-          allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.bmp', '.webp','.heic'],
-        }"
+        allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.bmp', '.webp', '.heic'],
+      }"
       width="100%"
       note="仅支持图片格式"
       :endpoint="uploadUrl"
@@ -64,6 +66,4 @@ const uploadUrl = `/apis/picturebed.muyin.site/v1alpha1/uploadImage?type=${props
   </VModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
