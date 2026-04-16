@@ -35,7 +35,7 @@ public class JhImage {
     /**
      * 创建时间
      */
-    private String createdAt;
+    private String created_at;
 
     /**
      * 用户ID

@@ -75,7 +75,8 @@ public class PictureBedService {
                 return juheService.getAlbumList(query).flatMap(juheAlbums -> {
                     List<AlbumVO> albumVOList = juheAlbums.stream().map(juheAlbum -> {
                         AlbumVO albumVO = new AlbumVO();
-                        albumVO.setId(String.valueOf(juheAlbum.getId())).setName(juheAlbum.getName());
+                        albumVO.setId(String.valueOf(juheAlbum.getId())).setName(juheAlbum.getName())
+                            .setCount(juheAlbum.getImage_num());
                         return albumVO;
                     }).toList();
                     return Mono.just(albumVOList);
@@ -224,6 +225,8 @@ public class PictureBedService {
                 .setUrl(image.getUrl())
                 .setMediaType("image/" + image.getFormat())
                 .setSize(Float.valueOf(image.getSize()))
+                .setCategories(image.getCategories())
+                .setCreateTime(image.getCreated_at())
                 .setHeight(image.getHeight())
                 .setWidth(image.getWidth());
             return imageVO;

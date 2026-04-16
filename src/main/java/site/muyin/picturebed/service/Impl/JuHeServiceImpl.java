@@ -5,6 +5,7 @@ import static site.muyin.picturebed.constant.CommonConstant.PictureBedType.JUHE;
 
 import io.netty.channel.ChannelOption;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -135,14 +136,15 @@ public class JuHeServiceImpl implements JuHeService {
                 List<JuHeAlbum> albumList = Collections.emptyList();
                 if (response.err == 0) {
                     Map<String, Integer> categoriesMap = (Map<String, Integer>) response.categories;
-                    albumList = categoriesMap.entrySet().stream()
-                        .map(entry -> {
-                            JuHeAlbum album = new JuHeAlbum();
-                            album.setId(entry.getValue());
-                            album.setName(entry.getKey());
-                            return album;
-                        })
-                        .collect(Collectors.toList());
+                    albumList = new ArrayList<>();
+                    int index = 1;
+                    for (Map.Entry<String, Integer> entry : categoriesMap.entrySet()) {
+                        JuHeAlbum album = new JuHeAlbum();
+                        album.setId(index++);
+                        album.setName(entry.getKey());
+                        album.setImage_num(entry.getValue());
+                        albumList.add(album);
+                    }
                 }
                 return albumList;
             });

@@ -22,6 +22,18 @@
 export interface ImageVO {
     /**
      * 
+     * @type {Array<string>}
+     * @memberof ImageVO
+     */
+    'categories'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ImageVO
+     */
+    'createTime'?: string;
+    /**
+     * 
      * @type {number}
      * @memberof ImageVO
      */

@@ -22,6 +22,12 @@
 export interface AlbumVO {
     /**
      * 
+     * @type {number}
+     * @memberof AlbumVO
+     */
+    'count'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof AlbumVO
      */

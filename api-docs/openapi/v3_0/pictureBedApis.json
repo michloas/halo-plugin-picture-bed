@@ -5,7 +5,7 @@
     "version" : "2.23.0"
   },
   "servers" : [ {
-    "url" : "http://localhost:44737",
+    "url" : "http://localhost:33191",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -506,6 +506,10 @@
       "AlbumVO" : {
         "type" : "object",
         "properties" : {
+          "count" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "description" : {
             "type" : "string"
           },
@@ -542,6 +546,15 @@
       "ImageVO" : {
         "type" : "object",
         "properties" : {
+          "categories" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "createTime" : {
+            "type" : "string"
+          },
           "height" : {
             "type" : "integer",
             "format" : "int32"

@@ -2,6 +2,7 @@ package site.muyin.picturebed.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import java.util.List;
 
 /**
  * @author: lywq
@@ -19,4 +20,6 @@ public class ImageVO {
     private Float size;
     private Integer width;
     private Integer height;
+    private String createTime;
+    private List<String> categories;
 }

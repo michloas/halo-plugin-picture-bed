@@ -13,6 +13,7 @@ import {
   VLoading,
   VPagination,
   VSpace,
+  VTag,
 } from '@halo-dev/components'
 import { computed, ref, watch } from 'vue'
 import { isImage } from '@/utils/image'
@@ -66,14 +67,14 @@ const picturebedType = computed(() => props.pictureBedKey.split('_')[0])
 const pictureBedId = computed(() => props.pictureBedKey.split('_')[1])
 
 const { data: albumList } = useQuery({
-  queryKey: [`albumList_${picturebedType.value}`, page, size, keyword],
+  queryKey: [`albumList_${picturebedType.value}`, keyword],
   queryFn: async () => {
     albumListIsLoading.value = true
     const { data } = await pictureBedApisClient.pictureBed.albums({
       pictureBedId: pictureBedId.value,
       type: picturebedType.value,
-      page: page.value,
-      size: size.value,
+      page: 1,
+      size: 100,
       keyword: keyword.value,
     })
     const albums = [
@@ -84,7 +85,9 @@ const { data: albumList } = useQuery({
       },
       ...data,
     ]
-    selectedAlbum.value = albums[0]
+    if (!selectedAlbum.value) {
+      selectedAlbum.value = albums[0]
+    }
     albumListIsLoading.value = false
     return albums
   },
@@ -220,15 +223,33 @@ watch(
   },
   { deep: true },
 )
+
+// 格式化文件大小
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${(bytes / k ** i).toFixed(1)} ${sizes[i]}`
+}
+
+// 格式化日期时间（到秒）
+const formatDateTime = (dateString: string): string => {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
 </script>
 
 <template>
-  <div>
-    <SearchInput placeholder="回车搜索" v-model="keyword" />
-  </div>
   <div
     v-if="!keyword"
-    class="topics mt-2 flex gap-x-2 gap-y-3 overflow-y-hidden overflow-x-hidden scroll-smooth pb-1"
+    class="topics mt-1 flex gap-x-2 gap-y-3 overflow-y-hidden overflow-x-hidden scroll-smooth pb-1"
   >
     <VLoading v-if="albumListIsLoading" />
     <div
@@ -236,45 +257,52 @@ watch(
       v-for="(album, index) in albumList"
       :key="index"
       :class="{
-        '!bg-gray-200 !text-gray-900': album.id === selectedAlbum?.id,
+        '!bg-primary !text-white shadow-md': album.id === selectedAlbum?.id,
       }"
-      class="flex cursor-pointer items-center rounded bg-gray-100 p-2 text-gray-500 transition-all hover:bg-gray-200 hover:text-gray-900 hover:shadow-sm"
+      class="flex cursor-pointer items-center rounded bg-gray-100 px-3 py-2 text-sm text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-900 hover:shadow-sm"
       @click="handleSelectAlbum(album)"
     >
-      <div class="flex flex-1 items-center truncate">
+      <div class="flex flex-1 items-center justify-between truncate">
         <span class="truncate text-sm">
           {{ album.name }}
+        </span>
+        <span
+          v-if="album.count !== undefined"
+          class="ml-2 shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600"
+        >
+          {{ album.count }}
         </span>
       </div>
     </div>
   </div>
-  <VSpace>
-    <VButton @click="refetch">
-      <template #icon>
-        <IconRefreshLine class="h-full w-full" />
-      </template>
-      刷新
-    </VButton>
-    <VButton @click="uploadVisible = true">
-      <template #icon>
-        <IconUpload class="h-full w-full" />
-      </template>
-      上传
-    </VButton>
-    <VButton v-if="props.max !== 1" @click="handleSelectAll">
-      <template #icon>
-        <IconCheckboxCircle class="h-full w-full" />
-      </template>
-      {{ isAllSelected ? '取消全选' : '全选' }}
-    </VButton>
-    <VButton type="danger" v-if="selectedImages.size > 0" @click="deleteSelected">
-      <template #icon>
-        <IconDeleteBin class="h-full w-full" />
-      </template>
-      删除
-    </VButton>
-  </VSpace>
-
+  <div class="mt-3">
+    <VSpace>
+      <VButton @click="refetch">
+        <template #icon>
+          <IconRefreshLine class="h-full w-full" />
+        </template>
+        刷新
+      </VButton>
+      <VButton @click="uploadVisible = true">
+        <template #icon>
+          <IconUpload class="h-full w-full" />
+        </template>
+        上传
+      </VButton>
+      <VButton v-if="props.max !== 1" @click="handleSelectAll">
+        <template #icon>
+          <IconCheckboxCircle class="h-full w-full" />
+        </template>
+        {{ isAllSelected ? '取消全选' : '全选' }}
+      </VButton>
+      <VButton type="danger" v-if="selectedImages.size > 0" @click="deleteSelected">
+        <template #icon>
+          <IconDeleteBin class="h-full w-full" />
+        </template>
+        删除
+      </VButton>
+    </VSpace>
+  </div>
   <VLoading v-if="isLoading" />
   <VEmpty
     v-else-if="imageList?.length === 0"
@@ -334,11 +362,31 @@ watch(
           </LazyImage>
           <AttachmentFileTypeIcon v-else :file-name="image.name" />
         </div>
-        <p
-          class="pointer-events-none block truncate px-2 py-1 text-center text-xs font-medium text-gray-700"
-        >
-          {{ image.name }}
-        </p>
+        <div class="px-2 py-1.5">
+          <p
+            class="pointer-events-none block truncate text-center text-xs font-medium text-gray-700"
+          >
+            {{ image.name }}
+          </p>
+          <div
+            v-if="image.categories && image.categories.length > 0"
+            class="mt-1 flex flex-wrap justify-center gap-1"
+          >
+            <VTag v-for="(category, idx) in image.categories" :key="idx" type="danger" size="sm">
+              {{ category }}
+            </VTag>
+          </div>
+          <div class="mt-1 flex items-center justify-center gap-2 text-xs text-gray-500">
+            <span v-if="image.createTime" class="flex items-center gap-0.5">
+              <IconCalendarLine class="h-3 w-3" />
+              {{ formatDateTime(image.createTime) }}
+            </span>
+            <span v-if="image.size" class="flex items-center gap-0.5">
+              <IconDatabase2Line class="h-3 w-3" />
+              {{ formatFileSize(image.size) }}
+            </span>
+          </div>
+        </div>
 
         <div
           :class="{ '!flex': selectedImages.has(image) }"
