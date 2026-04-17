@@ -249,7 +249,7 @@ const formatDateTime = (dateString: string): string => {
 <template>
   <div
     v-if="!keyword"
-    class="topics mt-1 flex gap-x-2 gap-y-3 overflow-y-hidden overflow-x-hidden scroll-smooth pb-1"
+    class="topics mt-1 flex flex-wrap gap-x-2 gap-y-3 overflow-y-hidden scroll-smooth pb-1"
   >
     <VLoading v-if="albumListIsLoading" />
     <div
@@ -262,8 +262,8 @@ const formatDateTime = (dateString: string): string => {
       class="flex cursor-pointer items-center rounded bg-gray-100 px-3 py-2 text-sm text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-900 hover:shadow-sm"
       @click="handleSelectAlbum(album)"
     >
-      <div class="flex flex-1 items-center justify-between truncate">
-        <span class="truncate text-sm">
+      <div class="flex flex-1 items-center justify-between">
+        <span class="whitespace-nowrap text-sm">
           {{ album.name }}
         </span>
         <span
@@ -372,9 +372,13 @@ const formatDateTime = (dateString: string): string => {
             v-if="image.categories && image.categories.length > 0"
             class="mt-1 flex flex-wrap justify-center gap-1"
           >
-            <VTag v-for="(category, idx) in image.categories" :key="idx" type="danger" size="sm">
+            <span 
+              v-for="(category, idx) in image.categories" 
+              :key="idx"
+              class="inline-flex items-center rounded border border-blue-300 bg-blue-100 px-2 py-0.5 text-xs text-blue-700"
+            >
               {{ category }}
-            </VTag>
+            </span>
           </div>
           <div class="mt-1 flex items-center justify-center gap-2 text-xs text-gray-500">
             <span v-if="image.createTime" class="flex items-center gap-0.5">
